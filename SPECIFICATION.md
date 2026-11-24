@@ -1,5 +1,7 @@
 # Kudos standalone app specification
 
+Public repository: <https://github.com/anganame-cmd/kudos>
+
 ## 1. Purpose and status
 
 The Kudos app lets colleagues recognize one another with short appreciation messages and makes recent recognition visible in a shared employee feed. This specification combines the approved requirements and technical design and records the implementation plan.
