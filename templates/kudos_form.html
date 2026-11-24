@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Give kudos{% endblock %}
+{% block content %}
+  <section class="panel form-panel">
+    <p class="eyebrow">Recognize a colleague</p>
+    <h1>Give kudos</h1>
+    <form method="post" action="{{ url_for('new_kudos') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="recipient-search">Search colleagues</label>
+      <input id="recipient-search" type="search" autocomplete="off" aria-controls="recipient_id">
+      <label for="recipient_id">Colleague</label>
+      <select id="recipient_id" name="recipient_id" required>
+        <option value="">Choose a colleague</option>
+        {% for recipient in recipients %}
+          <option value="{{ recipient.id }}"
+            {% if selected_recipient_id|string == recipient.id|string %}selected{% endif %}>
+            {{ recipient.display_name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="message">Appreciation message <span class="hint">(up to 500 characters)</span></label>
+      <textarea id="message" name="message" rows="5" maxlength="500" required>{{ message }}</textarea>
+      <button type="submit">Send kudos</button>
+    </form>
+  </section>
+  <script src="{{ url_for('static', filename='recipient_search.js') }}" defer></script>
+{% endblock %}

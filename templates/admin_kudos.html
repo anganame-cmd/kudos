@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Kudos moderation{% endblock %}
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Administrator tools</p>
+      <h1>Kudos moderation</h1>
+      <p>Hidden entries remain here until deleted.</p>
+    </div>
+  </div>
+
+  {% if pagination.items %}
+    <section class="moderation-list" aria-label="Kudos moderation list">
+      {% for kudos in pagination.items %}
+        <article class="kudos-card {% if not kudos.is_visible %}kudos-hidden{% endif %}">
+          <div class="kudos-meta">
+            <strong>{{ kudos.sender.display_name }}</strong>
+            <span aria-hidden="true">→</span>
+            <strong>{{ kudos.recipient.display_name }}</strong>
+            <span class="status">{{ "Visible" if kudos.is_visible else "Hidden" }}</span>
+            <time datetime="{{ kudos.created_at.isoformat() }}">
+              {{ kudos.created_at.strftime("%b %d, %Y at %H:%M UTC") }}
+            </time>
+          </div>
+          <p class="kudos-message">{{ kudos.message }}</p>
+          <div class="moderation-actions">
+            {% if kudos.is_visible %}
+              <form method="post" action="{{ url_for('hide_kudos', kudos_id=kudos.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="secondary-button" type="submit">Hide</button>
+              </form>
+            {% endif %}
+            <form method="post" action="{{ url_for('delete_kudos', kudos_id=kudos.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="danger-button" type="submit">Delete permanently</button>
+            </form>
+          </div>
+        </article>
+      {% endfor %}
+    </section>
+  {% else %}
+    <section class="panel empty-state"><p>No kudos to moderate.</p></section>
+  {% endif %}
+
+  {% if pagination.pages > 1 %}
+    <nav class="pagination" aria-label="Moderation pages">
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('admin_kudos', page=pagination.prev_num) }}">Newer</a>
+      {% endif %}
+      <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
+      {% if pagination.has_next %}
+        <a href="{{ url_for('admin_kudos', page=pagination.next_num) }}">Older</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endblock %}

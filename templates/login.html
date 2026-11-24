@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Choose a demo account · Kudos{% endblock %}
+{% block content %}
+  <section class="panel login-panel">
+    <p class="eyebrow">Local simulation</p>
+    <h1>Choose a demo account</h1>
+    <p>This account picker is for local testing only, not production authentication.</p>
+    {% if users %}
+      <form method="post" action="{{ url_for('demo_login_submit') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="user_id">Demo user</label>
+        <select id="user_id" name="user_id" required>
+          {% for user in users %}
+            <option value="{{ user.id }}">
+              {{ user.display_name }}{% if user.is_admin %} (administrator){% endif %}
+            </option>
+          {% endfor %}
+        </select>
+        <button type="submit">Continue</button>
+      </form>
+    {% else %}
+      <p class="empty-state">No demo users are available. Run <code>flask --app app seed-demo-users</code>.</p>
+    {% endif %}
+  </section>
+{% endblock %}

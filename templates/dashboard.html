@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Kudos feed{% endblock %}
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Team recognition</p>
+      <h1>Recent kudos</h1>
+      <p>Celebrating the people who make work better.</p>
+    </div>
+    <a class="button" href="{{ url_for('new_kudos') }}">Give kudos</a>
+  </div>
+
+  {% if pagination.items %}
+    <section class="feed" aria-label="Visible kudos">
+      {% for kudos in pagination.items %}
+        <article class="kudos-card">
+          <div class="kudos-meta">
+            <strong>{{ kudos.sender.display_name }}</strong>
+            <span aria-hidden="true">→</span>
+            <strong>{{ kudos.recipient.display_name }}</strong>
+            <time datetime="{{ kudos.created_at.isoformat() }}">
+              {{ kudos.created_at.strftime("%b %d, %Y at %H:%M UTC") }}
+            </time>
+          </div>
+          <p class="kudos-message">{{ kudos.message }}</p>
+        </article>
+      {% endfor %}
+    </section>
+  {% else %}
+    <section class="panel empty-state">
+      <h2>No kudos yet</h2>
+      <p>Send the first appreciation message to get the feed started.</p>
+    </section>
+  {% endif %}
+
+  {% if pagination.pages > 1 %}
+    <nav class="pagination" aria-label="Feed pages">
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('dashboard', page=pagination.prev_num) }}">Newer</a>
+      {% endif %}
+      <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
+      {% if pagination.has_next %}
+        <a href="{{ url_for('dashboard', page=pagination.next_num) }}">Older</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endblock %}

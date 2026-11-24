@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Kudos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="{{ url_for('dashboard') if g.current_user else url_for('demo_login') }}">Kudos</a>
+      {% if g.current_user %}
+        <nav aria-label="Main navigation">
+          <a href="{{ url_for('dashboard') }}">Feed</a>
+          <a href="{{ url_for('new_kudos') }}">Give kudos</a>
+          {% if g.current_user.is_admin %}
+            <a href="{{ url_for('admin_kudos') }}">Moderation</a>
+          {% endif %}
+          <span class="signed-in">Signed in as {{ g.current_user.display_name }}</span>
+          <form class="inline-form" action="{{ url_for('logout') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="link-button" type="submit">Sign out</button>
+          </form>
+        </nav>
+      {% endif %}
+    </header>
+
+    <main class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-list" aria-live="polite">
+            {% for category, message in messages %}
+              <p class="flash flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
